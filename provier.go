@@ -41,7 +41,7 @@ func (g *GeminiProvider) get() llms.Model {
 	return llm
 }
 
-func NewProviderFromEnv() (GetProvider, error) {
+func NewLLMProvider() (GetProvider, error) {
 	provider := os.Getenv("LLM_PROVIDER")
 	switch provider {
 	case "bedrock":

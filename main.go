@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	provider, err := NewProviderFromEnv()
+	provider, err := NewLLMProvider()
 	if err != nil {
 		log.Fatalf("failed to create provider: %v", err)
 	}
@@ -43,11 +43,11 @@ func images(llm llms.Model) string {
 				Role: llms.ChatMessageTypeHuman,
 				Parts: []llms.ContentPart{
 					llms.BinaryPart("image/png", imgData),
-					llms.TextPart("Give me a list ot tags for this image. - return json format list of string (tags)"),
+					llms.TextPart("Give me a list ot tags for this image. - return the list of string (tags) in valid json format"),
 				},
 			},
 		},
-		llms.WithMaxTokens(2000),
+		llms.WithMaxTokens(3000),
 		llms.WithTemperature(0.1),
 		llms.WithTopP(1.0),
 		llms.WithTopK(100),

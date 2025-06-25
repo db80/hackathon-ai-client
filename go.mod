@@ -1,6 +1,8 @@
-module langchain-llm-demo
+module hackathon-ai-client
 
-go 1.24.2
+go 1.24
+
+require github.com/tmc/langchaingo v0.1.13
 
 require (
 	cloud.google.com/go v0.114.0 // indirect
@@ -39,7 +41,6 @@ require (
 	github.com/googleapis/enterprise-certificate-proxy v0.3.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.4 // indirect
 	github.com/pkoukk/tiktoken-go v0.1.6 // indirect
-	github.com/tmc/langchaingo v0.1.13 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.51.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.51.0 // indirect

@@ -43,7 +43,7 @@ func images(llm llms.Model) string {
 				Role: llms.ChatMessageTypeHuman,
 				Parts: []llms.ContentPart{
 					llms.BinaryPart("image/png", imgData),
-					llms.TextPart("Give me a list ot tags for this image. - return the list of string (tags) in valid json format"),
+					llms.TextPart("Give me a list ot tags for this image. - response should be in JSON format with a single key 'tags' and an array of strings as value."),
 				},
 			},
 		},
@@ -51,6 +51,7 @@ func images(llm llms.Model) string {
 		llms.WithTemperature(0.1),
 		llms.WithTopP(1.0),
 		llms.WithTopK(100),
+		llms.WithJSONMode(),
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -60,10 +61,5 @@ func images(llm llms.Model) string {
 		log.Fatal("empty response from model")
 	}
 
-	log.Printf(
-		"input_tokens: %d, output_tokens: %d",
-		choices[0].GenerationInfo["InputTokens"],
-		choices[0].GenerationInfo["OutputTokens"],
-	)
 	return choices[0].Content
 }

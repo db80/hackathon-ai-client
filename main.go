@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/tmc/langchaingo/llms"
 )
@@ -17,20 +19,44 @@ func main() {
 	fmt.Printf("using provider: %T\n", provider)
 
 	llm := provider.get()
-	prompt := "Tell me a joke about brazilian football players."
+
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Println("Choose an action:")
+	fmt.Println("1. Talk to LLM")
+	fmt.Println("2. Extract tags from image")
+	fmt.Print("Enter your choice (1 or 2): ")
+
+	choice, _ := reader.ReadString('\n')
+	choice = strings.TrimSpace(choice)
+
+	switch choice {
+	case "1":
+		talkToLLM(llm)
+	case "2":
+		extractImageTags(llm)
+	default:
+		fmt.Println("Invalid choice")
+	}
+}
+
+func talkToLLM(llm llms.Model) {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Enter your prompt: ")
+	prompt, _ := reader.ReadString('\n')
+	prompt = strings.TrimSpace(prompt)
 
 	response, err := llms.GenerateFromSinglePrompt(context.Background(), llm, prompt)
 	if err != nil {
-		fmt.Errorf("failed to generate response: %w", err)
+		log.Fatalf("failed to generate response: %v", err)
 	}
 
+	fmt.Println("\nResponse:")
 	fmt.Println(response)
-	fmt.Println(images(llm))
 }
 
 var imageFileName = "hox_ny.png"
 
-func images(llm llms.Model) string {
+func extractImageTags(llm llms.Model) {
 	imgData, err := os.ReadFile(imageFileName)
 	if err != nil {
 		log.Fatalf("failed to read image file: %v", err)
@@ -43,7 +69,7 @@ func images(llm llms.Model) string {
 				Role: llms.ChatMessageTypeHuman,
 				Parts: []llms.ContentPart{
 					llms.BinaryPart("image/png", imgData),
-					llms.TextPart("Give me a list ot tags for this image. - response should be in JSON format with a single key 'tags' and an array of strings as value."),
+					llms.TextPart("Analyze the provided image and generate a list of relevant tags. The response must be a JSON object with a single key named 'tags', which contains an array of strings representing the tags."),
 				},
 			},
 		},
@@ -61,5 +87,6 @@ func images(llm llms.Model) string {
 		log.Fatal("empty response from model")
 	}
 
-	return choices[0].Content
+	fmt.Println("\nImage Tags:")
+	fmt.Println(choices[0].Content)
 }
